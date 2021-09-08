@@ -11,34 +11,24 @@ import rien.bijl.Scoreboard.r.Plugin.WorldManager;
 import java.util.Collection;
 
 public class Reload {
-
-    public Reload(Player player)
-    {
+    public Reload(Player player) {
         if (!player.hasPermission("scoreboard.reload")) {
             player.sendMessage(i18n.get("commands.lackspermission"));
             return;
         }
-
         Session.getSession().defaultBoard.cancel();
         Session.getSession().worldManager.cancel();
-
         ConfigControl.get().reloadConfigs();
         Collection<BoardPlayer> boardPlayers = BoardPlayer.allBoardPlayers();
         ConfigBoard newBoard = new ConfigBoard("board");
-
         newBoard.enable();
         newBoard.runTaskTimerAsynchronously(Session.getSession().plugin, 1L, 1L);
-
         Session.getSession().worldManager = new WorldManager();
         Session.getSession().worldManager.runTaskTimer(Session.getSession().plugin, 1L, 20L);
-
         Session.getSession().defaultBoard = newBoard;
-
-        for (BoardPlayer bp: boardPlayers) {
+        for (BoardPlayer bp : boardPlayers) {
             bp.attachConfigBoard(newBoard);
         }
-
         player.sendMessage(i18n.get("commands.reload"));
     }
-
 }

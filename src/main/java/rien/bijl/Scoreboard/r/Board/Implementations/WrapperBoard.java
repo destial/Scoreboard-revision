@@ -4,10 +4,10 @@ import org.bukkit.entity.Player;
 
 public class WrapperBoard implements IBoard {
 
-    private static final String DEFAULT = "rien.bijl.Scoreboard.rien.bijl.Scoreboard.r.Board.Implementations.Drivers.V1.ScoreboardDriverV1";
+    private static final String DEFAULT = "rien.bijl.Scoreboard.r.Board.Implementations.Drivers.V1.ScoreboardDriverV1";
 
     private static final String[][] DRIVERS = {
-            {"SCOREBOARD_DRIVER_V1", "rien.bijl.Scoreboard.rien.bijl.Scoreboard.r.Board.Implementations.Drivers.V1.ScoreboardDriverV1"}
+            {"SCOREBOARD_DRIVER_V1", "rien.bijl.Scoreboard.r.Board.Implementations.Drivers.V1.ScoreboardDriverV1"}
     };
 
     private IBoard child;
@@ -15,7 +15,7 @@ public class WrapperBoard implements IBoard {
     /**
      * Load the WrapperBoard with driver specification
      * @param driver What driver should be loaded
-     * @throws ClassNotFoundException This really can't be thrown, but Intelliji wants me to
+     * @throws ClassNotFoundException This really can't be thrown, but Intellij wants me to
      * @throws IllegalAccessException This can be thrown tho
      * @throws InstantiationException This really can't be thrown too
      */

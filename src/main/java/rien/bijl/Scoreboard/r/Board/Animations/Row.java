@@ -4,16 +4,15 @@ import java.util.List;
 
 public class Row {
 
-    private List<String> lines;
-    private int interval;
+    private final List<String> lines;
+    private final int interval;
     private int count = 0;
     private int current = 1;
     private boolean is_static = false;
 
     private String line;
 
-    public Row(List<String> lines, int interval)
-    {
+    public Row(List<String> lines, int interval) {
         this.lines = lines;
         this.interval = interval;
 
@@ -31,20 +30,17 @@ public class Row {
         if (lines.size() < 1) {
             line = "";
         } else {
-            this.line = lines.get(0);
+            line = lines.get(0);
         }
     }
 
     public String getLine()
     {
-        return this.line;
+        return line;
     }
 
-    public void update()
-    {
-        if (is_static) {
-            return;
-        }
+    public void update() {
+        if (is_static) return;
 
         if (count >= interval) {
             count = 0;

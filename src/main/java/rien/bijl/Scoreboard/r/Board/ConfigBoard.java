@@ -12,35 +12,35 @@ import rien.bijl.Scoreboard.r.Plugin.Utility.ScoreboardStrings;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class ConfigBoard extends BukkitRunnable {
 
     public String board;
     private Row title;
-    private ArrayList<Row> rows = new ArrayList<>();
-    private ArrayList<Player> players = new ArrayList<>();
-    private HashMap<Player, WrapperBoard> playerToBoard = new HashMap<>();
+    private final ArrayList<Row> rows = new ArrayList<>();
+    private final HashMap<Player, WrapperBoard> playerToBoard = new HashMap<>();
     private boolean enabled;
 
     public ConfigBoard(String board)
     {
         this.board = board;
-        this.initTitle();
-        this.initRows();
+        initTitle();
+        initRows();
     }
 
     private void initTitle()
     {
-        List<String> lines = Objects.requireNonNull(ConfigControl.get().gc("settings").getConfigurationSection(this.board + ".title")).getStringList("lines");
-        int interval = ConfigControl.get().gc("settings").getInt(this.board + ".title.interval");
-        this.title = new Row(ScoreboardStrings.makeColoredStringList(lines), interval);
+        List<String> lines = Objects.requireNonNull(ConfigControl.get().gc("settings").getConfigurationSection(board + ".title")).getStringList("lines");
+        int interval = ConfigControl.get().gc("settings").getInt(board + ".title.interval");
+        title = new Row(ScoreboardStrings.makeColoredStringList(lines), interval);
     }
 
     private void initRows()
     {
         for (int i = 1; i < 200; i++) {
-            ConfigurationSection section = ConfigControl.get().gc("settings").getConfigurationSection(this.board + ".rows." + i);
+            ConfigurationSection section = ConfigControl.get().gc("settings").getConfigurationSection(board + ".rows." + i);
             if (section != null) {
                 Row row = new Row(ScoreboardStrings.makeColoredStringList(section.getStringList("lines")), section.getInt("interval"));
                 rows.add(row);
@@ -49,8 +49,6 @@ public class ConfigBoard extends BukkitRunnable {
     }
 
     public void hookPlayer(Player player) {
-        players.add(player);
-
         try {
             WrapperBoard wrapperBoard = new WrapperBoard("SCOREBOARD_DRIVER_V1");
             wrapperBoard.setLineCount(rows.size());
@@ -63,37 +61,31 @@ public class ConfigBoard extends BukkitRunnable {
 
     public void unhookPlayer(Player player) {
         playerToBoard.remove(player);
-        players.remove(player);
         player.setScoreboard(Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard());
     }
 
     @Override
     public void run() {
-        if (!this.enabled) return;
-
-        this.title.update();
-
-        for(Row row: rows) {
+        if (!enabled) return;
+        title.update();
+        for (Row row : rows) {
             row.update();
         }
-
-        for (Player player: playerToBoard.keySet()) {
-            WrapperBoard wrapperBoard = playerToBoard.get(player);
-            wrapperBoard.setTitle(ScoreboardStrings.placeholders(player, this.title.getLine()));
+        for (Map.Entry<Player, WrapperBoard> pwb : playerToBoard.entrySet()) {
+            pwb.getValue().setTitle(ScoreboardStrings.placeholders(pwb.getKey(), title.getLine()));
 
             int count = 0;
             for (Row row: rows) {
-                wrapperBoard.setLine(count, ScoreboardStrings.placeholders(player, row.getLine()));
-                count++;
+                pwb.getValue().setLine(count++, ScoreboardStrings.placeholders(pwb.getKey(), row.getLine()));
             }
         }
     }
 
     public void enable() {
-        this.enabled = true;
+        enabled = true;
     }
 
     public void disable() {
-        this.enabled = false;
+        enabled = false;
     }
 }

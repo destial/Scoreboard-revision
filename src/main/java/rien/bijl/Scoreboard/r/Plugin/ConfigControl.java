@@ -14,28 +14,20 @@ public class ConfigControl {
 
     private static ConfigControl instance = null;
 
-    public static ConfigControl get()
-    {
-        if(instance != null)
-            return instance;
-
+    public static ConfigControl get() {
+        if (instance != null) return instance;
         return new ConfigControl();
     }
 
     HashMap<String, FileConfiguration> designations = new HashMap<>();
 
-    private ConfigControl()
-    {
+    private ConfigControl() {
         ConfigControl.instance = this;
         this.createDataFiles();
     }
 
-    public void createDataFiles()
-    {
-
-        if(!Session.getSession().plugin.getDataFolder().exists())
-            Session.getSession().plugin.getDataFolder().mkdirs();
-
+    public void createDataFiles() {
+        if (!Session.getSession().plugin.getDataFolder().exists()) Session.getSession().plugin.getDataFolder().mkdirs();
 
         createConfigFile("settings");
         createConfigFile("language");
@@ -46,56 +38,42 @@ public class ConfigControl {
         designations.clear();
     }
 
-    public void createConfigFile(String name)
-    {
+    public void createConfigFile(String name) {
         File f = new File(Session.getSession().plugin.getDataFolder(), name + ".yml");
 
         boolean needCopyDefaults = false;
-
         try {
-            if(!f.exists())
-            {
+            if (!f.exists()) {
                 f.createNewFile();
                 needCopyDefaults = true;
             }
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
-
-        if(needCopyDefaults)
-        {
+        if (needCopyDefaults) {
             try {
                 Reader defConfigStream = new InputStreamReader(ConfigControl.class.getResourceAsStream("/" + name + ".yml"), "UTF-8");
                 PrintWriter writer = new PrintWriter(f, "UTF-8");
                 writer.print(read(defConfigStream));
                 writer.close();
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
-
         FileConfiguration fc = YamlConfiguration.loadConfiguration(f);
         designations.put(name, fc);
     }
 
-
-
-
-    public void reloadConfigs()
-    {
-        this.purge();
-        this.createDataFiles();
+    public void reloadConfigs() {
+        purge();
+        createDataFiles();
     }
 
-    public FileConfiguration gc(String fc)
-    {
+    public FileConfiguration gc(String fc) {
         return designations.get(fc);
     }
 
-    public String read(Reader r)
-            throws IOException {
+    public String read(Reader r) throws IOException {
         char[] arr = new char[8 * 1024];
         StringBuilder buffer = new StringBuilder();
         int numCharsRead;
@@ -105,5 +83,4 @@ public class ConfigControl {
         r.close();
         return buffer.toString();
     }
-
 }

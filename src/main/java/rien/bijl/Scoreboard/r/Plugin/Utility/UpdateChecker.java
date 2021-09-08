@@ -19,11 +19,10 @@ public class UpdateChecker {
     public String getValueFromWebsite(String website) throws IOException {
         URL url = new URL(website);
         Scanner sc = new Scanner(url.openStream());
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         while(sc.hasNext()) {
             sb.append(sc.next());
         }
-
         return sb.toString();
     }
 

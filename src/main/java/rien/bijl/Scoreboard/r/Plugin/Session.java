@@ -35,16 +35,11 @@ public class Session {
         return session;
     }
 
-    /**
-     * Session constructor
-     * @param plugin the JavaPlugin
-     */
     private Session(JavaPlugin plugin) {
         this.plugin = plugin;
 
-        for(String dependency : this.dependencies)
+        for(String dependency : dependencies)
             if(Bukkit.getPluginManager().isPluginEnabled(dependency))
-                this.enabled_dependencies.add(dependency);
+                enabled_dependencies.add(dependency);
     }
-
 }

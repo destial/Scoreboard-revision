@@ -6,7 +6,6 @@ import java.io.*;
 import java.util.Random;
 
 public class ConfigChecker {
-
     public static void check(String config, int version) {
         FileConfiguration fc = ConfigControl.get().gc(config);
 
@@ -32,20 +31,12 @@ public class ConfigChecker {
     }
 
     private static void copyFileUsingStream(File source, File dest) throws IOException {
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            is = new FileInputStream(source);
-            os = new FileOutputStream(dest);
+        try (InputStream is = new FileInputStream(source); OutputStream os = new FileOutputStream(dest)) {
             byte[] buffer = new byte[1024];
             int length;
             while ((length = is.read(buffer)) > 0) {
                 os.write(buffer, 0, length);
             }
-        } finally {
-            is.close();
-            os.close();
         }
     }
-
 }

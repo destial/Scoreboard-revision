@@ -8,15 +8,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class Help {
-
-    public Help(Player player)
-    {
-        List<String> lines = Objects.requireNonNull(ConfigControl.get().gc("language").getConfigurationSection("commands")).getStringList("help");
-
-        for(String line: lines) {
+    public Help(Player player) {
+        for (String line : Objects.requireNonNull(ConfigControl.get().gc("language").getConfigurationSection("commands")).getStringList("help")) {
             player.sendMessage(i18n.parse(line));
         }
     }
-
-
 }

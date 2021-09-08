@@ -23,6 +23,7 @@ settings:
 # In what worlds should we disable scoreboard?
 disabled-worlds:
   - 'non_existant_world'
+whitelist-world: false
 
 board:
   title:

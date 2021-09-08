@@ -24,7 +24,6 @@ public class BoardPlayer {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-
         if (!this.enabled) {
             configBoard.unhookPlayer(player);
         } else {
@@ -32,8 +31,7 @@ public class BoardPlayer {
         }
     }
 
-    public void lock()
-    {
+    public void lock() {
         configBoard.unhookPlayer(player);
         this.worldLock = true;
     }
@@ -59,8 +57,7 @@ public class BoardPlayer {
         map.remove(player);
     }
 
-    public static BoardPlayer getBoardPlayer(Player player)
-    {
+    public static BoardPlayer getBoardPlayer(Player player) {
         if (map.containsKey(player)) {
             return map.get(player);
         }
@@ -72,7 +69,6 @@ public class BoardPlayer {
         return map.values();
     }
 
-
-    private static HashMap<Player, BoardPlayer> map = new HashMap<>();
+    private static final HashMap<Player, BoardPlayer> map = new HashMap<>();
 
 }

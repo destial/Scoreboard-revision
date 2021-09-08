@@ -11,10 +11,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ScoreboardStrings {
-
     private static final Pattern pattern = Pattern.compile("\\{#[a-fA-F0-9]{6}}");
     private static final Pattern placeholderPattern = Pattern.compile("&#[a-fA-F0-9]{6}");
-
 
     public static String make(Player player, String content) {
         return colors(placeholders(player, content));
@@ -66,12 +64,10 @@ public class ScoreboardStrings {
     }
 
     public static String placeholders(Player player, String content) {
-        if(Session.getSession().enabled_dependencies.contains(Session.getSession().dependencies[0]) && org.bukkit.Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") &&
+        if (Session.getSession().enabled_dependencies.contains(Session.getSession().dependencies[0]) && org.bukkit.Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") &&
                 PlaceholderAPI.containsPlaceholders(content)) {
             return placeholderColors(PlaceholderAPI.setPlaceholders(player, content));
         }
-
         return content;
     }
-
 }

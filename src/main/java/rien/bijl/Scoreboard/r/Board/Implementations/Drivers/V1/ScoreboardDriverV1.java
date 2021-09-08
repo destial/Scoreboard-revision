@@ -20,27 +20,22 @@ public class ScoreboardDriverV1 implements IBoard {
     private Scoreboard board;
     private Objective objective;
     private int lines;
-    private HashMap<Integer, String> cache = new HashMap<>();
+    private final HashMap<Integer, String> cache = new HashMap<>();
 
     @Override
-    public void setPlayer(Player player)
-    {
+    public void setPlayer(Player player) {
         this.player = player;
-
-        this.board = Objects.requireNonNull(Session.getSession().plugin.getServer().getScoreboardManager()).getNewScoreboard();
-        this.objective = this.board.registerNewObjective("sb1", "sb2");
-        this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        this.objective.setDisplayName("");
-
-        this.createTeams();
-        this.setBoard();
-
+        board = Objects.requireNonNull(Session.getSession().plugin.getServer().getScoreboardManager()).getNewScoreboard();
+        objective = this.board.registerNewObjective("sb1", "sb2");
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        objective.setDisplayName("");
+        createTeams();
+        setBoard();
         LineLimits.getLineLimit();
     }
 
     @Override
-    public void setTitle(String title)
-    {
+    public void setTitle(String title) {
         if (title == null) {
             title = "";
         }
@@ -49,12 +44,11 @@ public class ScoreboardDriverV1 implements IBoard {
             title = title.substring(0, LineLimits.getLineLimit() * 2);
         }
 
-        this.objective.setDisplayName(title);
+        objective.setDisplayName(title);
     }
 
     @Override
-    public void setLine(int line, String content)
-    {
+    public void setLine(int line, String content) {
         if (content == null) {
             content = "";
         }
@@ -71,8 +65,7 @@ public class ScoreboardDriverV1 implements IBoard {
         team.setSuffix(split[1]);
     }
 
-    private String[] split(String line)
-    {
+    private String[] split(String line) {
         if (line.length() < LineLimits.getLineLimit()) {
             return new String[]{line, ""};
         }
@@ -111,30 +104,28 @@ public class ScoreboardDriverV1 implements IBoard {
     }
 
     @Override
-    public void setLineCount(int lines)
-    {
+    public void setLineCount(int lines) {
         this.lines = lines;
     }
 
     @Override
     public Player getPlayer() {
-        return this.getPlayer();
+        return player;
     }
 
-    private void createTeams()
-    {
-        int score = this.lines;
+    private void createTeams() {
+        int score = lines;
 
-        for (int i = 0; i < this.lines; i++) {
-            Team t = this.board.registerNewTeam(i + "");
+        for (int i = 0; i < lines; i++) {
+            Team t = board.registerNewTeam(i + "");
             t.addEntry(ChatColor.values()[i] + "");
-            this.objective.getScore(ChatColor.values()[i] + "").setScore(score);
+            objective.getScore(ChatColor.values()[i] + "").setScore(score);
             score --;
         }
     }
 
     private void setBoard()
     {
-        this.player.setScoreboard(this.board);
+        player.setScoreboard(board);
     }
 }
