@@ -41,19 +41,13 @@ public class Row {
 
     public void update() {
         if (is_static) return;
-
         if (count >= interval) {
             count = 0;
-            current++;
-
-            if (current >= lines.size()) {
-                current = 0;
-            }
-
+            ++current;
+            if (current >= lines.size()) current = 0;
             line = lines.get(current);
-
         } else {
-            count++;
+            ++count;
         }
 
     }

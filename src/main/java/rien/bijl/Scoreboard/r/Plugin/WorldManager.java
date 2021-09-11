@@ -26,18 +26,14 @@ public class WorldManager extends BukkitRunnable {
             BoardPlayer player = BoardPlayer.getBoardPlayer(p);
             if (disabled_worlds.contains(p.getWorld().getName().toLowerCase().trim())) {
                 if (whitelist_mode) {
-                    if (player.worldLock) {
-                        player.unlock();
-                    }
+                    if (player.worldLock) player.unlock();
                     continue;
                 }
-                player.lock();
+                if (!player.worldLock) player.lock();
             } else {
                 if (whitelist_mode) {
-                    player.lock();
-                } else if (player.worldLock) {
-                    player.unlock();
-                }
+                    if (!player.worldLock) player.lock();
+                } else if (player.worldLock) player.unlock();
             }
         }
     }

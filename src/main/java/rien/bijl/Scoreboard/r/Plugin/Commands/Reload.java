@@ -16,19 +16,17 @@ public class Reload {
             player.sendMessage(i18n.get("commands.lackspermission"));
             return;
         }
+        Session.getSession().defaultBoard.disable();
         Session.getSession().defaultBoard.cancel();
         Session.getSession().worldManager.cancel();
         ConfigControl.get().reloadConfigs();
-        Collection<BoardPlayer> boardPlayers = BoardPlayer.allBoardPlayers();
         ConfigBoard newBoard = new ConfigBoard("board");
         newBoard.enable();
         newBoard.runTaskTimerAsynchronously(Session.getSession().plugin, 1L, 1L);
         Session.getSession().worldManager = new WorldManager();
         Session.getSession().worldManager.runTaskTimer(Session.getSession().plugin, 1L, 20L);
         Session.getSession().defaultBoard = newBoard;
-        for (BoardPlayer bp : boardPlayers) {
-            bp.attachConfigBoard(newBoard);
-        }
+        for (BoardPlayer bp : BoardPlayer.allBoardPlayers()) bp.attachConfigBoard(newBoard);
         player.sendMessage(i18n.get("commands.reload"));
     }
 }

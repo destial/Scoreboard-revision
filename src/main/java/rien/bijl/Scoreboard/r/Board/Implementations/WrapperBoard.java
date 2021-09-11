@@ -1,6 +1,7 @@
 package rien.bijl.Scoreboard.r.Board.Implementations;
 
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
 
 public class WrapperBoard implements IBoard {
 
@@ -22,11 +23,11 @@ public class WrapperBoard implements IBoard {
     public WrapperBoard(String driver) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         for (String[] drivers : DRIVERS) {
             if (drivers[0].equals(driver)) {
-                this.child = (IBoard) Class.forName(drivers[1]).newInstance();
+                child = (IBoard) Class.forName(drivers[1]).newInstance();
             }
         }
-        if (this.child == null) {
-            this.child = (IBoard) Class.forName(DEFAULT).newInstance();
+        if (child == null) {
+            child = (IBoard) Class.forName(DEFAULT).newInstance();
         }
     }
 
@@ -53,6 +54,16 @@ public class WrapperBoard implements IBoard {
     @Override
     public Player getPlayer() {
         return child.getPlayer();
+    }
+
+    @Override
+    public Scoreboard getBukkitScoreboard() {
+        return child.getBukkitScoreboard();
+    }
+
+    @Override
+    public Scoreboard getPreviousBukkitScoreboard() {
+        return child.getPreviousBukkitScoreboard();
     }
 
 }

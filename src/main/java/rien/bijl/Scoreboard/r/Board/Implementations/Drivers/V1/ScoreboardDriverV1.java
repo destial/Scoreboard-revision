@@ -18,6 +18,7 @@ public class ScoreboardDriverV1 implements IBoard {
 
     private Player player;
     private Scoreboard board;
+    private Scoreboard previousBoard;
     private Objective objective;
     private int lines;
     private final HashMap<Integer, String> cache = new HashMap<>();
@@ -26,7 +27,7 @@ public class ScoreboardDriverV1 implements IBoard {
     public void setPlayer(Player player) {
         this.player = player;
         board = Objects.requireNonNull(Session.getSession().plugin.getServer().getScoreboardManager()).getNewScoreboard();
-        objective = this.board.registerNewObjective("sb1", "sb2");
+        objective = board.registerNewObjective("sb1", "sb2");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         objective.setDisplayName("");
         createTeams();
@@ -49,12 +50,8 @@ public class ScoreboardDriverV1 implements IBoard {
 
     @Override
     public void setLine(int line, String content) {
-        if (content == null) {
-            content = "";
-        }
-        if (!shouldUpdate(line, content)) {
-            return;
-        }
+        if (content == null) content = "";
+        if (!shouldUpdate(line, content)) return;
 
         Team team = board.getTeam(line + "");
         String[] split = split(content);
@@ -66,9 +63,7 @@ public class ScoreboardDriverV1 implements IBoard {
     }
 
     private String[] split(String line) {
-        if (line.length() < LineLimits.getLineLimit()) {
-            return new String[]{line, ""};
-        }
+        if (line.length() < LineLimits.getLineLimit()) return new String[]{line, ""};
 
         String prefix = line.substring(0, LineLimits.getLineLimit());
         String suffix = line.substring(LineLimits.getLineLimit());
@@ -76,7 +71,7 @@ public class ScoreboardDriverV1 implements IBoard {
         if (prefix.endsWith("§")) { // Check if we accidentally cut off a color
             prefix = ScoreboardStrings.removeLastCharacter(prefix);
             suffix = "§" + suffix;
-        } else if(prefix.contains("§")) { // Are there any colors we need to continue?
+        } else if (prefix.contains("§")) { // Are there any colors we need to continue?
             suffix = ChatColor.getLastColors(prefix) + suffix;
         } else { // Just make sure the team color doesn't mess up anything
             suffix = "§f" + suffix;
@@ -94,11 +89,7 @@ public class ScoreboardDriverV1 implements IBoard {
             cache.put(line, content);
             return true;
         }
-
-        if (cache.get(line).equals(content)) {
-            return false;
-        }
-
+        if (cache.get(line).equals(content)) return false;
         cache.put(line, content);
         return true;
     }
@@ -113,19 +104,27 @@ public class ScoreboardDriverV1 implements IBoard {
         return player;
     }
 
+    @Override
+    public Scoreboard getBukkitScoreboard() {
+        return board;
+    }
+
+    @Override
+    public Scoreboard getPreviousBukkitScoreboard() {
+        return previousBoard;
+    }
+
     private void createTeams() {
         int score = lines;
-
         for (int i = 0; i < lines; i++) {
             Team t = board.registerNewTeam(i + "");
             t.addEntry(ChatColor.values()[i] + "");
-            objective.getScore(ChatColor.values()[i] + "").setScore(score);
-            score --;
+            objective.getScore(ChatColor.values()[i] + "").setScore(score--);
         }
     }
 
-    private void setBoard()
-    {
+    private void setBoard() {
+        previousBoard = player.getScoreboard();
         player.setScoreboard(board);
     }
 }

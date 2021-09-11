@@ -31,7 +31,6 @@ public class ScoreboardRevision {
 
     public void enable() {
         Session.makeSession(plugin);
-
         setupBasics();
         registerEvents();
         checkForUpdates();

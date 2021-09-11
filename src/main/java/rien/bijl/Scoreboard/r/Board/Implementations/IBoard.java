@@ -1,6 +1,7 @@
 package rien.bijl.Scoreboard.r.Board.Implementations;
 
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
 
 public interface IBoard {
     /**
@@ -33,4 +34,8 @@ public interface IBoard {
      * @return The player of this hooked scoreboard
      */
     Player getPlayer();
+
+    Scoreboard getBukkitScoreboard();
+
+    Scoreboard getPreviousBukkitScoreboard();
 }

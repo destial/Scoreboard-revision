@@ -1,6 +1,7 @@
 package rien.bijl.Scoreboard.r.Board;
 
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,7 +25,7 @@ public class BoardPlayer {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-        if (!this.enabled) {
+        if (!enabled) {
             configBoard.unhookPlayer(player);
         } else {
             configBoard.hookPlayer(player);
@@ -33,12 +34,11 @@ public class BoardPlayer {
 
     public void lock() {
         configBoard.unhookPlayer(player);
-        this.worldLock = true;
+        worldLock = true;
     }
 
     public void unlock() {
         worldLock = false;
-
         if (isEnabled()) {
             configBoard.hookPlayer(player);
         }
@@ -57,11 +57,13 @@ public class BoardPlayer {
         map.remove(player);
     }
 
-    public static BoardPlayer getBoardPlayer(Player player) {
-        if (map.containsKey(player)) {
-            return map.get(player);
-        }
-
+    /**
+     * Will always return a BoardPlayer, whether existing or newly created
+     * @param player The base bukkit player
+     * @return a BoardPlayer
+     */
+    public static @NotNull BoardPlayer getBoardPlayer(@NotNull Player player) {
+        if (map.containsKey(player)) return map.get(player);
         return new BoardPlayer(player);
     }
 

@@ -1,6 +1,5 @@
 package rien.bijl.Scoreboard.r.Board;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -11,9 +10,11 @@ import rien.bijl.Scoreboard.r.Plugin.Utility.ScoreboardStrings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConfigBoard extends BukkitRunnable {
 
@@ -21,6 +22,7 @@ public class ConfigBoard extends BukkitRunnable {
     private Row title;
     private final ArrayList<Row> rows = new ArrayList<>();
     private final HashMap<Player, WrapperBoard> playerToBoard = new HashMap<>();
+    private final List<Player> toUnhook = new LinkedList<>();
     private boolean enabled;
 
     public ConfigBoard(String board)
@@ -60,23 +62,27 @@ public class ConfigBoard extends BukkitRunnable {
     }
 
     public void unhookPlayer(Player player) {
-        playerToBoard.remove(player);
-        player.setScoreboard(Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard());
+        WrapperBoard wb = playerToBoard.get(player);
+        if (wb == null) return;
+        toUnhook.add(player);
+        if (wb.getBukkitScoreboard() == player.getScoreboard())
+            player.setScoreboard(wb.getPreviousBukkitScoreboard());
     }
 
     @Override
     public void run() {
         if (!enabled) return;
         title.update();
-        for (Row row : rows) {
-            row.update();
+        for (Player unhook : toUnhook) {
+            playerToBoard.remove(unhook);
         }
+        toUnhook.clear();
+        AtomicInteger count = new AtomicInteger();
         for (Map.Entry<Player, WrapperBoard> pwb : playerToBoard.entrySet()) {
             pwb.getValue().setTitle(ScoreboardStrings.placeholders(pwb.getKey(), title.getLine()));
-
-            int count = 0;
-            for (Row row: rows) {
-                pwb.getValue().setLine(count++, ScoreboardStrings.placeholders(pwb.getKey(), row.getLine()));
+            for (Row row : rows) {
+                row.update();
+                pwb.getValue().setLine(count.getAndIncrement(), ScoreboardStrings.placeholders(pwb.getKey(), row.getLine()));
             }
         }
     }
